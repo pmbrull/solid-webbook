@@ -32,7 +32,6 @@ function handleLogin() {
     const loggedIn = !!session;
     // Enabled when !loggedIn
     $('#login').toggle(!loggedIn);
-    // $('#hello').toggle(!loggedIn)
     // Enabled when loggedIn
     $('#logout').toggle(loggedIn);
     $('#submit').toggle(loggedIn);
