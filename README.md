@@ -4,4 +4,8 @@
 
 The purpose of this project is to set up a web phonebook for solid pods. This will allow users to be discovered by other applications and users.
 
-You can follow the discussion on this project [here](https://forum.solidproject.org/t/solid-webbook-enabling-social-into-solid/)
+You can follow the discussion on this project [here](https://forum.solidproject.org/t/solid-webbook-enabling-social-into-solid/).
+
+A possible architecture for the process could be as follows:
+
+![img](./docs/schema.png)

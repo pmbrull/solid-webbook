@@ -2,7 +2,7 @@
 const FOAF = $rdf.Namespace('http://xmlns.com/foaf/0.1/');
 
 const webbook = 'https://webbook.solid.community/profile/card#me'
-const addressURL = 'https://webbook.solid.community/webbook/address.ttl'
+const webbookUrl = 'https://webbook.solid.community/webbook/'
 
 var state = {}
 state.loggedIn = null
@@ -70,23 +70,61 @@ function addListeners() {
 
   submit.addEventListener("click", () => {
 
-    const query = ` INSERT DATA {
-      <${state.user.webId}> ${FOAF('member')} <${webbook}>.
-     }
-     `
-   
-     console.log("query", query)
-     solid.auth.fetch(addressURL, {
-       method: 'PATCH',
-       headers: { 'Content-type': 'application/sparql-update' },
-       body: query,
-       credentials: 'include'
-     });
+    // updateAddress()
+    createEntry()
 
-     $('#submitted').text("Thanks for your submission!");
+    $('#submitted').text("Thanks for your submission!");
 
   })
 };
+
+/*
+  Creates a new entry on the Webbook based on that userId.
+  This file can only be managed by the user but read
+  freely.
+*/
+function createEntry() {
+  const body = `
+  @prefix : <#>.
+
+  :user
+    a <${state.user.webId}>;
+    ${FOAF('member')} <${webbook}>.
+  `
+
+  let url = new URL(state.user.webId)
+
+  console.log("body", body)
+  solid.auth.fetch(webbookUrl, {
+    method: 'PUT',
+    headers: { 
+      'Content-type': 'text/turtle',
+      'Slug': url.host.replace(/\./g, '-')
+    },
+    body: body,
+    credentials: 'include'
+  });
+}
+
+/*
+  Updates data into address.ttl
+  Security is managed in a append-only fashion in the file.
+*/
+function updateAddress() {
+
+  const query = ` INSERT DATA {
+    <${state.user.webId}> ${FOAF('member')} <${webbook}>.
+  }`
+ 
+  console.log("query", query)
+
+  solid.auth.fetch(webbookUrl + 'address.ttl', {
+    method: 'PATCH',
+    headers: { 'Content-type': 'application/sparql-update' },
+    body: query,
+    credentials: 'include'
+  });
+}
 
 // MAIN
 init()
